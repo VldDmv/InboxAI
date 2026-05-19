@@ -50,6 +50,16 @@ inboxai:
     model: claude-haiku-4-5-20251001
     max-tokens: 512
     max-retries: 3
+  voyage:
+    api-key: ${VOYAGE_API_KEY:}
+    base-url: https://api.voyageai.com
+    model: voyage-3-lite
+    dimension: 512
+    max-retries: 3
+  embed:
+    interval-ms: 60000
+    initial-delay-ms: 20000
+    batch-size: 20
 
 logging:
   level:

@@ -29,6 +29,17 @@ inboxai:
     max-tokens: 256
     max-retries: 1
     retry-initial-backoff: 10ms
+  voyage:
+    api-key: test-key
+    base-url: http://localhost:0
+    model: voyage-3-lite
+    dimension: 512
+    max-retries: 1
+    retry-initial-backoff: 10ms
+  embed:
+    interval-ms: 3600000
+    initial-delay-ms: 3600000
+    batch-size: 5
 
 logging:
   level:
