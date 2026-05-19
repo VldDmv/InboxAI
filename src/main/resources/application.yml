@@ -1,6 +1,26 @@
 spring:
   application:
     name: inboxai
+
+  datasource:
+    url: ${INBOXAI_DB_URL:jdbc:postgresql://localhost:5432/inboxai}
+    username: ${INBOXAI_DB_USER:inboxai}
+    password: ${INBOXAI_DB_PASSWORD:inboxai}
+    driver-class-name: org.postgresql.Driver
+
+  jpa:
+    open-in-view: false
+    hibernate:
+      ddl-auto: validate
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+        jdbc:
+          time_zone: UTC
+
+  liquibase:
+    change-log: classpath:db/changelog/db.changelog-master.xml
+
   thymeleaf:
     check-template-location: false
 
