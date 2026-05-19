@@ -40,34 +40,38 @@ public class JdbcItemEmbeddingDao implements ItemEmbeddingDao {
     }
 
     @Override
-    public List<SimilarItem> findSimilarToVector(float[] queryVector, int limit) {
+    public List<SimilarItem> findSimilarToVector(float[] queryVector, long userId, int limit) {
         String vec = toVectorLiteral(queryVector);
         return jdbc.query(
                 """
-                SELECT id, title, summary, link,
-                       embedding <=> ?::vector AS distance
-                FROM items
-                WHERE embedding IS NOT NULL
-                ORDER BY embedding <=> ?::vector ASC
+                SELECT i.id, i.title, i.summary, i.link,
+                       i.embedding <=> ?::vector AS distance
+                FROM items i
+                JOIN sources s ON s.id = i.source_id
+                WHERE s.user_id = ?
+                  AND i.embedding IS NOT NULL
+                ORDER BY i.embedding <=> ?::vector ASC
                 LIMIT ?
                 """,
-                SIMILAR_MAPPER, vec, vec, limit);
+                SIMILAR_MAPPER, vec, userId, vec, limit);
     }
 
     @Override
-    public List<SimilarItem> findSimilarToItem(long itemId, int limit) {
+    public List<SimilarItem> findSimilarToItem(long itemId, long userId, int limit) {
         return jdbc.query(
                 """
                 SELECT i.id, i.title, i.summary, i.link,
                        i.embedding <=> (SELECT embedding FROM items WHERE id = ?) AS distance
                 FROM items i
-                WHERE i.id <> ?
+                JOIN sources s ON s.id = i.source_id
+                WHERE s.user_id = ?
+                  AND i.id <> ?
                   AND i.embedding IS NOT NULL
                   AND (SELECT embedding FROM items WHERE id = ?) IS NOT NULL
                 ORDER BY distance ASC
                 LIMIT ?
                 """,
-                SIMILAR_MAPPER, itemId, itemId, itemId, limit);
+                SIMILAR_MAPPER, itemId, userId, itemId, itemId, limit);
     }
 
     private static final RowMapper<SimilarItem> SIMILAR_MAPPER = (rs, i) -> new SimilarItem(

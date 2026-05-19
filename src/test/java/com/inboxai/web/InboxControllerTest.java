@@ -6,14 +6,16 @@ import com.inboxai.domain.Source;
 import com.inboxai.domain.SourceType;
 import com.inboxai.domain.User;
 import com.inboxai.repository.ItemRepository;
+import com.inboxai.security.SecurityConfig;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.data.domain.Page;
+import org.springframework.context.annotation.Import;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 
@@ -31,6 +33,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.view;
 
 @WebMvcTest(InboxController.class)
+@Import(SecurityConfig.class)
 @ActiveProfiles("test")
 class InboxControllerTest {
 
@@ -53,6 +56,7 @@ class InboxControllerTest {
     }
 
     @Test
+    @WithMockUser(username = "u@example.com")
     void rendersInboxWithItemsAndCategoryChips() throws Exception {
         Source source = new Source(user, SourceType.RSS, "https://feed", "Feed One");
         setId(source, "id", 1L);
@@ -75,6 +79,7 @@ class InboxControllerTest {
     }
 
     @Test
+    @WithMockUser(username = "u@example.com")
     void appliesCategoryFilterFromQueryParam() throws Exception {
         when(itemRepository.findFeed(eq(7L), eq(Category.IMPORTANT), any(Pageable.class)))
                 .thenReturn(new PageImpl<>(List.of()));
@@ -85,6 +90,7 @@ class InboxControllerTest {
     }
 
     @Test
+    @WithMockUser(username = "u@example.com")
     void showsEmptyStateWhenNoItems() throws Exception {
         when(itemRepository.findFeed(eq(7L), eq(null), any(Pageable.class)))
                 .thenReturn(new PageImpl<>(List.of()));
@@ -92,6 +98,14 @@ class InboxControllerTest {
         mockMvc.perform(get("/"))
                 .andExpect(status().isOk())
                 .andExpect(content().string(org.hamcrest.Matchers.containsString("No items yet")));
+    }
+
+    @Test
+    void unauthenticatedRequestRedirectsToLogin() throws Exception {
+        mockMvc.perform(get("/"))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(org.springframework.test.web.servlet.result.MockMvcResultMatchers
+                        .redirectedUrlPattern("**/login"));
     }
 
     private static void setId(Object target, String fieldName, Long value) throws Exception {

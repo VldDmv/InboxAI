@@ -8,7 +8,7 @@ public interface ItemEmbeddingDao {
 
     void saveEmbedding(long itemId, float[] embedding);
 
-    List<SimilarItem> findSimilarToVector(float[] queryVector, int limit);
+    List<SimilarItem> findSimilarToVector(float[] queryVector, long userId, int limit);
 
-    List<SimilarItem> findSimilarToItem(long itemId, int limit);
+    List<SimilarItem> findSimilarToItem(long itemId, long userId, int limit);
 }

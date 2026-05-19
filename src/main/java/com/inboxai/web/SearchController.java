@@ -20,9 +20,11 @@ public class SearchController {
     private static final int RESULT_LIMIT = 20;
 
     private final SimilaritySearchService searchService;
+    private final CurrentUserProvider currentUser;
 
-    public SearchController(SimilaritySearchService searchService) {
+    public SearchController(SimilaritySearchService searchService, CurrentUserProvider currentUser) {
         this.searchService = searchService;
+        this.currentUser = currentUser;
     }
 
     @GetMapping
@@ -33,7 +35,8 @@ public class SearchController {
             return "search";
         }
         try {
-            List<SimilarItem> results = searchService.searchByText(query, RESULT_LIMIT);
+            long userId = currentUser.get().getId();
+            List<SimilarItem> results = searchService.searchByText(query, userId, RESULT_LIMIT);
             model.addAttribute("results", results);
         } catch (Exception e) {
             log.warn("Search failed for query '{}': {}", query, e.toString());

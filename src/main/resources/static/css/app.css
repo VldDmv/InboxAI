@@ -35,6 +35,16 @@ a:hover { text-decoration: underline; }
 .topbar .brand { font-weight: 700; color: var(--fg); font-size: 18px; }
 .topbar nav a { margin-right: 16px; color: var(--muted); }
 .topbar nav a:hover { color: var(--fg); }
+.topbar .user { margin-left: auto; display: flex; align-items: center; gap: 12px; font-size: 13px; color: var(--muted); }
+.topbar .logout-form { margin: 0; }
+.topbar .logout-form button {
+    background: transparent;
+    color: var(--muted);
+    border: 1px solid var(--line);
+    padding: 4px 10px;
+    font-size: 12px;
+}
+.topbar .logout-form button:hover { color: var(--fg); background: white; }
 
 main {
     max-width: 820px;

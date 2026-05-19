@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="en"
       xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
 <head>
     <meta charset="UTF-8"/>
@@ -11,10 +12,20 @@
 <body>
 <header class="topbar">
     <a th:href="@{/}" class="brand">InboxAI</a>
-    <nav>
+    <nav sec:authorize="isAuthenticated()">
         <a th:href="@{/}">Inbox</a>
         <a th:href="@{/sources}">Sources</a>
         <a th:href="@{/search}">Search</a>
+    </nav>
+    <div class="user" sec:authorize="isAuthenticated()">
+        <span sec:authentication="name">user@example.com</span>
+        <form method="post" th:action="@{/logout}" class="logout-form">
+            <button type="submit">Sign out</button>
+        </form>
+    </div>
+    <nav sec:authorize="!isAuthenticated()">
+        <a th:href="@{/login}">Sign in</a>
+        <a th:href="@{/register}">Register</a>
     </nav>
 </header>
 <main layout:fragment="content"></main>

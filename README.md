@@ -14,7 +14,7 @@ stores semantic embeddings in pgvector for "find similar items" search.
 - [x] Slice 4 — Anthropic client + classification with prompt caching
 - [x] Slice 5 — Embeddings + semantic similarity search
 - [x] Slice 6 — Thymeleaf inbox UI
-- [ ] Slice 7 — Spring Security session auth
+- [x] Slice 7 — Spring Security session auth
 - [ ] Slice 8 — IMAP source + Google OAuth2 (optional)
 
 ## Local setup

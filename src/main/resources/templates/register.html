@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/main}">
+<head>
+    <title>Create account</title>
+</head>
+<body>
+<main layout:fragment="content">
+    <h1>Create account</h1>
+
+    <form method="post" th:action="@{/register}" th:object="${registrationForm}" class="source-form">
+        <label>
+            Email
+            <input type="email" th:field="*{email}" required autofocus/>
+        </label>
+        <label>
+            Password
+            <input type="password" th:field="*{password}" required minlength="8"/>
+        </label>
+        <button type="submit">Register</button>
+        <p class="form-error" th:if="${#fields.hasErrors('email')}" th:errors="*{email}">email error</p>
+        <p class="form-error" th:if="${#fields.hasErrors('password')}" th:errors="*{password}">password error</p>
+    </form>
+
+    <p>Already have an account? <a th:href="@{/login}">Sign in</a>.</p>
+</main>
+</body>
+</html>

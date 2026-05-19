@@ -15,15 +15,15 @@ public class SimilaritySearchService {
         this.dao = dao;
     }
 
-    public List<SimilarItem> searchByText(String query, int limit) {
+    public List<SimilarItem> searchByText(String query, long userId, int limit) {
         if (query == null || query.isBlank()) {
             return List.of();
         }
         float[] vector = client.embed(query, VoyageEmbeddingClient.InputType.QUERY);
-        return dao.findSimilarToVector(vector, limit);
+        return dao.findSimilarToVector(vector, userId, limit);
     }
 
-    public List<SimilarItem> searchByItem(long itemId, int limit) {
-        return dao.findSimilarToItem(itemId, limit);
+    public List<SimilarItem> searchByItem(long itemId, long userId, int limit) {
+        return dao.findSimilarToItem(itemId, userId, limit);
     }
 }
