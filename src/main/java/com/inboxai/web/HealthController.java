@@ -7,8 +7,8 @@ import java.util.Map;
 
 @RestController
 public class HealthController {
-    @GetMapping("/")
-    public Map<String, String> root() {
+    @GetMapping("/api/info")
+    public Map<String, String> info() {
         return Map.of(
                 "app", "InboxAI",
                 "status", "up",

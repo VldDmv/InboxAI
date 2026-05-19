@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/main}">
+<head>
+    <title>Inbox</title>
+</head>
+<body>
+<main layout:fragment="content">
+    <h1>Inbox</h1>
+
+    <nav class="filters">
+        <a th:href="@{/}"
+           th:classappend="${activeCategory == null} ? 'active' : ''">All</a>
+        <a th:each="cat : ${categories}"
+           th:href="@{/(category=${cat})}"
+           th:text="${cat.name().toLowerCase()}"
+           th:classappend="${activeCategory == cat} ? 'active' : ''">news</a>
+    </nav>
+
+    <p class="empty" th:if="${items.isEmpty()}">
+        No items yet. Add a source on the
+        <a th:href="@{/sources}">Sources</a> page.
+    </p>
+
+    <ul class="items">
+        <li th:each="item : ${items}" class="item">
+            <div class="item-head">
+                <span class="badge"
+                      th:if="${item.category != null}"
+                      th:classappend="'badge-' + ${item.category.name().toLowerCase()}"
+                      th:text="${item.category.name().toLowerCase()}">news</span>
+                <span class="badge badge-unclassified"
+                      th:if="${item.category == null}">unclassified</span>
+                <span class="source" th:text="${item.source.title}">Source</span>
+                <span class="when"
+                      th:if="${item.publishedAt != null}"
+                      th:text="${#temporals.format(item.publishedAt, 'yyyy-MM-dd HH:mm')}">2026-01-01</span>
+            </div>
+            <a class="title"
+               th:href="${item.link}"
+               th:text="${item.title}"
+               target="_blank" rel="noopener">Title</a>
+            <p class="summary"
+               th:if="${item.summary != null}"
+               th:text="${item.summary}">Summary</p>
+        </li>
+    </ul>
+
+    <nav class="pager" th:if="${page.totalPages > 1}">
+        <a th:if="${page.hasPrevious()}"
+           th:href="@{/(category=${activeCategory}, page=${page.number - 1})}">← Previous</a>
+        <span th:text="|Page ${page.number + 1} of ${page.totalPages}|">Page 1</span>
+        <a th:if="${page.hasNext()}"
+           th:href="@{/(category=${activeCategory}, page=${page.number + 1})}">Next →</a>
+    </nav>
+</main>
+</body>
+</html>

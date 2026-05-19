@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/main}">
+<head>
+    <title>Sources</title>
+</head>
+<body>
+<main layout:fragment="content">
+    <h1>Sources</h1>
+
+    <form method="post" th:action="@{/sources}" th:object="${sourceForm}" class="source-form">
+        <label>
+            Feed URL
+            <input type="url" th:field="*{url}" placeholder="https://example.com/feed.xml" required/>
+        </label>
+        <label>
+            Title (optional)
+            <input type="text" th:field="*{title}" placeholder="Defaults to URL"/>
+        </label>
+        <button type="submit">Add source</button>
+        <p class="form-error" th:if="${#fields.hasErrors('url')}" th:errors="*{url}">URL error</p>
+        <p class="form-error" th:if="${#fields.hasErrors('title')}" th:errors="*{title}">Title error</p>
+    </form>
+
+    <h2>Your sources</h2>
+    <p class="empty" th:if="${sources.isEmpty()}">No sources yet.</p>
+    <table class="sources" th:if="${!sources.isEmpty()}">
+        <thead>
+        <tr>
+            <th>Title</th>
+            <th>URL</th>
+            <th>Last fetched</th>
+            <th>Active</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="src : ${sources}">
+            <td th:text="${src.title}">Title</td>
+            <td><a th:href="${src.url}" th:text="${src.url}" target="_blank" rel="noopener">url</a></td>
+            <td th:text="${src.lastFetchedAt != null ? #temporals.format(src.lastFetchedAt, 'yyyy-MM-dd HH:mm') : '—'}">—</td>
+            <td th:text="${src.active ? 'yes' : 'no'}">yes</td>
+        </tr>
+        </tbody>
+    </table>
+</main>
+</body>
+</html>

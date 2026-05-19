@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <title layout:title-pattern="$CONTENT_TITLE — InboxAI">InboxAI</title>
+    <link rel="stylesheet" th:href="@{/css/app.css}"/>
+</head>
+<body>
+<header class="topbar">
+    <a th:href="@{/}" class="brand">InboxAI</a>
+    <nav>
+        <a th:href="@{/}">Inbox</a>
+        <a th:href="@{/sources}">Sources</a>
+        <a th:href="@{/search}">Search</a>
+    </nav>
+</header>
+<main layout:fragment="content"></main>
+</body>
+</html>

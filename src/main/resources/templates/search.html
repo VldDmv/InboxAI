@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/main}">
+<head>
+    <title>Search</title>
+</head>
+<body>
+<main layout:fragment="content">
+    <h1>Semantic search</h1>
+
+    <form method="get" th:action="@{/search}" class="search-form">
+        <input type="text" name="q" th:value="${query}" placeholder="What are you looking for?" autofocus/>
+        <button type="submit">Search</button>
+    </form>
+
+    <p class="form-error" th:if="${error}" th:text="${error}">error</p>
+
+    <p class="empty" th:if="${query != '' and results.isEmpty() and error == null}">
+        No matches found.
+    </p>
+
+    <ul class="items" th:if="${!results.isEmpty()}">
+        <li th:each="r : ${results}" class="item">
+            <div class="item-head">
+                <span class="distance" th:text="${#numbers.formatDecimal(r.distance, 1, 4)}">0.1234</span>
+            </div>
+            <a class="title" th:href="${r.link}" th:text="${r.title}" target="_blank" rel="noopener">Title</a>
+            <p class="summary" th:if="${r.summary != null}" th:text="${r.summary}">Summary</p>
+        </li>
+    </ul>
+</main>
+</body>
+</html>
