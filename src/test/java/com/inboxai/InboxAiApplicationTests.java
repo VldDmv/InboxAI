@@ -1,0 +1,11 @@
+package com.inboxai;
+
+import org.junit.jupiter.api.Test;
+import org.springframework.boot.test.context.SpringBootTest;
+
+@SpringBootTest
+class InboxAiApplicationTests {
+    @Test
+    void contextLoads() {
+    }
+}

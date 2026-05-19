@@ -1,0 +1,22 @@
+spring:
+  application:
+    name: inboxai
+  thymeleaf:
+    check-template-location: false
+
+server:
+  port: 8080
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics
+  endpoint:
+    health:
+      show-details: when_authorized
+
+logging:
+  level:
+    root: INFO
+    com.inboxai: DEBUG
