@@ -14,6 +14,11 @@ spring:
   liquibase:
     enabled: false
 
+inboxai:
+  fetch:
+    interval-ms: 3600000
+    initial-delay-ms: 3600000
+
 logging:
   level:
     com.inboxai: DEBUG

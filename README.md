@@ -10,7 +10,7 @@ stores semantic embeddings in pgvector for "find similar items" search.
 
 - [x] Slice 1 — Spring Boot skeleton, health endpoint
 - [x] Slice 2 — Liquibase + domain (User/Source/Item) + pgvector
-- [ ] Slice 3 — RSS fetch (ROME) + scheduler + dedup
+- [x] Slice 3 — RSS fetch (ROME) + scheduler + dedup
 - [ ] Slice 4 — Anthropic client + classification with prompt caching
 - [ ] Slice 5 — Embeddings + semantic similarity search
 - [ ] Slice 6 — Thymeleaf inbox UI

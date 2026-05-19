@@ -36,6 +36,11 @@ management:
     health:
       show-details: when_authorized
 
+inboxai:
+  fetch:
+    interval-ms: 600000
+    initial-delay-ms: 10000
+
 logging:
   level:
     root: INFO
