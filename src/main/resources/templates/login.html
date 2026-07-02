@@ -11,6 +11,7 @@
     <h1>Sign in</h1>
 
     <p class="form-error" th:if="${param.error}">Invalid email or password.</p>
+    <p class="form-error" th:if="${param.ratelimit}">Too many attempts — try again in a minute.</p>
     <p class="empty" th:if="${param.logout}">You've been signed out.</p>
     <p class="empty" th:if="${param.registered}">Account created — sign in below.</p>
 

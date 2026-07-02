@@ -10,6 +10,8 @@
 <main layout:fragment="content">
     <h1>Create account</h1>
 
+    <p class="form-error" th:if="${param.ratelimit}">Too many attempts — try again in a minute.</p>
+
     <form method="post" th:action="@{/register}" th:object="${registrationForm}" class="source-form">
         <label>
             Email
