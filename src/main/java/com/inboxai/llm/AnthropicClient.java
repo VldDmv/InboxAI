@@ -16,6 +16,8 @@ public class AnthropicClient {
 
     private static final Logger log = LoggerFactory.getLogger(AnthropicClient.class);
 
+    private static final long MAX_RETRY_AFTER_SECONDS = 60;
+
     private final AnthropicProperties props;
     private final RestClient restClient;
 
@@ -37,6 +39,7 @@ public class AnthropicClient {
         long backoffMs = props.getRetryInitialBackoff().toMillis();
         RuntimeException last = null;
         for (int attempt = 1; attempt <= props.getMaxRetries(); attempt++) {
+            Long retryAfterMs = null;
             try {
                 return restClient.post()
                         .uri("/v1/messages")
@@ -48,6 +51,7 @@ public class AnthropicClient {
                     throw e;
                 }
                 last = e;
+                retryAfterMs = parseRetryAfterMs(e);
                 log.warn("Anthropic returned {} on attempt {}/{}: {}",
                         e.getStatusCode(), attempt, props.getMaxRetries(), e.getMessage());
             } catch (ResourceAccessException e) {
@@ -56,7 +60,9 @@ public class AnthropicClient {
                         attempt, props.getMaxRetries(), e.getMessage());
             }
             if (attempt < props.getMaxRetries()) {
-                sleep(backoffMs);
+                // a rate-limit response says exactly how long to wait — honour
+                // it instead of guessing with exponential backoff
+                sleep(retryAfterMs != null ? retryAfterMs : backoffMs);
                 backoffMs *= 2;
             }
         }
@@ -66,6 +72,21 @@ public class AnthropicClient {
     private static boolean isRetryable(HttpStatusCode status) {
         int code = status.value();
         return code == 429 || code == 529 || (code >= 500 && code < 600);
+    }
+
+    private static Long parseRetryAfterMs(RestClientResponseException e) {
+        String retryAfter = e.getResponseHeaders() == null
+                ? null
+                : e.getResponseHeaders().getFirst("Retry-After");
+        if (retryAfter == null) {
+            return null;
+        }
+        try {
+            long seconds = Long.parseLong(retryAfter.trim());
+            return seconds < 0 ? null : Math.min(seconds, MAX_RETRY_AFTER_SECONDS) * 1000;
+        } catch (NumberFormatException ex) {
+            return null; // HTTP-date variant or garbage — use exponential backoff
+        }
     }
 
     private static void sleep(long ms) {

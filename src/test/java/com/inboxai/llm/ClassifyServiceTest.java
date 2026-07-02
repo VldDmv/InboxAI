@@ -125,6 +125,25 @@ class ClassifyServiceTest {
     }
 
     @Test
+    void retriesOn429HonouringRetryAfterHeader() {
+        wireMock.stubFor(post(urlEqualTo("/v1/messages"))
+                .inScenario("rate-limit").whenScenarioStateIs("Started")
+                .willReturn(aResponse().withStatus(429)
+                        .withHeader("Retry-After", "0")
+                        .withBody("{\"type\":\"rate_limit_error\"}"))
+                .willSetStateTo("attempt-2"));
+        wireMock.stubFor(post(urlEqualTo("/v1/messages"))
+                .inScenario("rate-limit").whenScenarioStateIs("attempt-2")
+                .willReturn(aResponse().withStatus(200).withHeader("content-type", "application/json")
+                        .withBody(toolUseResponse("news", "OK.", 0.8, 10, 0, 0, 20))));
+
+        ClassificationResult result = service.classify("t", "b");
+
+        assertThat(result.category()).isEqualTo(Category.NEWS);
+        assertThat(wireMock.findAll(postRequestedFor(urlEqualTo("/v1/messages")))).hasSize(2);
+    }
+
+    @Test
     void doesNotRetryOn400() {
         wireMock.stubFor(post(urlEqualTo("/v1/messages"))
                 .willReturn(aResponse().withStatus(400)
