@@ -32,7 +32,8 @@ public record AnthropicRequest(
     public record Tool(
             String name,
             String description,
-            @JsonProperty("input_schema") Map<String, Object> inputSchema
+            @JsonProperty("input_schema") Map<String, Object> inputSchema,
+            Boolean strict
     ) {
     }
 

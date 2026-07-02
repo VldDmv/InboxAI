@@ -34,18 +34,22 @@ public class ClassifyService {
                     ),
                     "confidence", Map.of(
                             "type", "number",
-                            "minimum", 0.0,
-                            "maximum", 1.0,
+                            // strict mode rejects minimum/maximum constraints,
+                            // so the range lives in the description only
                             "description", "Confidence in the classification, 0.0–1.0."
                     )
             ),
-            "required", List.of("category", "summary", "confidence")
+            "required", List.of("category", "summary", "confidence"),
+            "additionalProperties", false
     );
 
+    // strict: true makes the API guarantee the tool input validates against
+    // the schema, so parse() can't see a missing field or unknown category
     private static final AnthropicRequest.Tool CLASSIFY_TOOL = new AnthropicRequest.Tool(
             TOOL_NAME,
             "Classify an inbox item and produce a one-sentence summary.",
-            INPUT_SCHEMA
+            INPUT_SCHEMA,
+            true
     );
 
     private final AnthropicClient client;

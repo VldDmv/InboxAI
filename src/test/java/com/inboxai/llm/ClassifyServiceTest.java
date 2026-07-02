@@ -79,6 +79,8 @@ class ClassifyServiceTest {
         assertThat(body.get("tool_choice").get("type").asText()).isEqualTo("tool");
         assertThat(body.get("tool_choice").get("name").asText()).isEqualTo("classify_item");
         assertThat(body.get("tools").get(0).get("name").asText()).isEqualTo("classify_item");
+        assertThat(body.get("tools").get(0).get("strict").asBoolean()).isTrue();
+        assertThat(body.get("tools").get(0).get("input_schema").get("additionalProperties").asBoolean()).isFalse();
 
         assertThat(body.get("messages").get(0).get("role").asText()).isEqualTo("user");
         assertThat(body.get("messages").get(0).get("content").asText())
