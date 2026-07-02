@@ -1,6 +1,6 @@
 # InboxAI
 
-Java 17 · Spring Boot 3.2 · PostgreSQL 16 · pgvector · Thymeleaf · Anthropic Claude
+Java 21 · Spring Boot 3.2 · PostgreSQL 16 · pgvector · Thymeleaf · Anthropic Claude
 
 AI-powered triage for RSS feeds (and later IMAP mail). Pulls items from your
 sources, classifies each one with Claude, generates a one-line summary, and
@@ -17,19 +17,29 @@ stores semantic embeddings in pgvector for "find similar items" search.
 - [x] Slice 7 — Spring Security session auth
 - [ ] Slice 8 — IMAP source + Google OAuth2 (optional)
 
-## Local setup
+## Quick start (Docker)
 
-Requirements: JDK 17+, Maven 3.9+, PostgreSQL 16+ with `vector` extension.
+    export ANTHROPIC_API_KEY=sk-ant-...  # required to actually classify
+    export VOYAGE_API_KEY=pa-...         # required to embed for semantic search
+    docker compose up --build
+    # http://localhost:8080 → {"app":"InboxAI","status":"up","version":"..."}
 
+Postgres 16 with pgvector runs as the `postgres` service; Liquibase creates
+the `vector` extension and the schema on startup.
+
+## Local setup (without Docker)
+
+Requirements: JDK 21+, Maven 3.9+, PostgreSQL 16+ with `vector` extension.
+
+    # Or run just the database from compose: docker compose up postgres
     createdb inboxai
     psql -d inboxai -c 'CREATE EXTENSION IF NOT EXISTS vector;'
     # Defaults: jdbc:postgresql://localhost:5432/inboxai, user=inboxai, pass=inboxai
     # Override with INBOXAI_DB_URL / INBOXAI_DB_USER / INBOXAI_DB_PASSWORD.
 
-    export ANTHROPIC_API_KEY=sk-ant-...  # required to actually classify
-    export VOYAGE_API_KEY=pa-...         # required to embed for semantic search
+    export ANTHROPIC_API_KEY=sk-ant-...
+    export VOYAGE_API_KEY=pa-...
     mvn spring-boot:run
-    # http://localhost:8080 → {"app":"InboxAI","status":"up","version":"..."}
 
 Tests run against an in-memory H2 (PostgreSQL compatibility mode); Liquibase
 is disabled in the `test` profile and Hibernate generates the schema from the

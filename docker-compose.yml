@@ -1,0 +1,37 @@
+services:
+  postgres:
+    image: pgvector/pgvector:pg16
+    container_name: inboxai-postgres
+    environment:
+      POSTGRES_DB: inboxai
+      POSTGRES_USER: inboxai
+      POSTGRES_PASSWORD: inboxai
+    ports:
+      - "5432:5432"
+    volumes:
+      - inboxai-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U inboxai -d inboxai"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+
+  app:
+    build: .
+    container_name: inboxai-app
+    ports:
+      - "8080:8080"
+    restart: on-failure
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      INBOXAI_DB_URL: jdbc:postgresql://postgres:5432/inboxai
+      INBOXAI_DB_USER: inboxai
+      INBOXAI_DB_PASSWORD: inboxai
+      # pass your keys through from the host environment
+      ANTHROPIC_API_KEY: ${ANTHROPIC_API_KEY:-}
+      VOYAGE_API_KEY: ${VOYAGE_API_KEY:-}
+
+volumes:
+  inboxai-data:
