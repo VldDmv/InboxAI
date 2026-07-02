@@ -2,6 +2,14 @@ spring:
   application:
     name: inboxai
 
+  # fetch, classify and embed each run on @Scheduled; with the default
+  # single-thread scheduler a slow RSS poll would block the other two
+  task:
+    scheduling:
+      pool:
+        size: 3
+      thread-name-prefix: sched-
+
   datasource:
     url: ${INBOXAI_DB_URL:jdbc:postgresql://localhost:5432/inboxai}
     username: ${INBOXAI_DB_USER:inboxai}
